@@ -1,4 +1,8 @@
 <?php
+
+session_start();
+
+
 ########### Connection With Db ###########
 $server     = "localhost";
 $dbName     = "gym";
@@ -9,7 +13,11 @@ $connection = mysqli_connect($server , $dbUser , $dbPassword , $dbName);
 
 if (!$connection) {
     # code...
-    echo "Error : ".mysqli_connect_error();
+    die ("Error : ".mysqli_connect_error());
+}
+
+function doQuery($sql){
+    return mysqli_query($GLOBALS['connection'],$sql);
 }
 
 ?>
