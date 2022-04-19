@@ -2,8 +2,8 @@
 
 ############################################################
 ///////// Connect with db
-require '../../partials/db.php';
-require '../../partials/functions.php';
+require '../partials/db.php';
+require '../partials/functions.php';
 
 $id = $_GET['id'];
 
@@ -11,40 +11,40 @@ $sql  = "select * From subscribe where id = $id";
 $show = doQuery($sql);
 
 
-if(mysqli_num_rows($show) == 0){
+if (mysqli_num_rows($show) == 0) {
     $message = ["Fail" => "Invalid Data"];
-    $_SESSION['Message'] = $message ;
-    header("Location: index.php"); 
-}else{
+    $_SESSION['Message'] = $message;
+    header("Location: index.php");
+} else {
     $data = mysqli_fetch_assoc($show);
 }
 
-if ($_SERVER['REQUEST_METHOD']=='POST') {
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     # Fetch Data
     $title = cleanData($_POST['title']);
 
     $errors = [];
 
-    if (!validate($title,'reqiured')) {
+    if (!validate($title, 'reqiured')) {
         # code...
-        $errors['title']='Field Required';
-    }elseif(!validate($title , 'min', 3)){
-        $errors['title']='Field Length Must Be > = 3 char';
+        $errors['title'] = 'Field Required';
+    } elseif (!validate($title, 'min', 3)) {
+        $errors['title'] = 'Field Length Must Be > = 3 char';
     }
 
     #Check Errors
-    if(count($errors) > 0){
-        $_SESSION['Message'] = $errors ;
-    }else{
+    if (count($errors) > 0) {
+        $_SESSION['Message'] = $errors;
+    } else {
 
         $sql = "update subscribe set type = '$title' where id = $id ";
         $edit = doQuery($sql);
-        if($edit){
+        if ($edit) {
             $message = ["Success" => "Raw Updated"];
             $_SESSION['Message'] = $message;
             header('Location: index.php');
             exit;
-        }else{
+        } else {
             $message = ["Fail" => " Update Row"];
         }
 
@@ -76,7 +76,7 @@ require '../layouts/sidebar.php';
         </ol>
 
 
-        <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'])."?id=". $data['id']; ?>" method="POST" >
+        <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']) . "?id=" . $data['id']; ?>" method="POST">
 
             <div class="form-group">
                 <label for="exampleInputName">Title</label>

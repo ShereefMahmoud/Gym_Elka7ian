@@ -2,8 +2,8 @@
 
 ############################################################
 ///////// Connect with db
-require '../../partials/db.php';
-require '../../partials/functions.php';
+require '../partials/db.php';
+require '../partials/functions.php';
 
 ########################################################################################################
 # Fetch Roles ..... 
@@ -17,41 +17,66 @@ $id = $_GET['id'];
 
 $sql  = "select *  From user  where id = $id";
 $show = doQuery($sql);
-if(mysqli_num_rows($show) == 0){
+if (mysqli_num_rows($show) == 0) {
     $message = ["Fail" => "Invalid Data"];
-    $_SESSION['Message'] = $message ;
-    header("Location: index.php"); 
-}else{
+    $_SESSION['Message'] = $message;
+    header("Location: index.php");
+} else {
     $data = mysqli_fetch_assoc($show);
 }
 
-if ($_SERVER['REQUEST_METHOD']=='POST') {
+###########################################################################################
+//////////////Form
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     # Fetch Data
-    $title = cleanData($_POST['title']);
+    $name = cleanData($_POST['name']);
+    $email = cleanData($_POST['email']);
+    $password = cleanData($_POST['password']);
+    $user_type_id = cleanData($_POST['user_type_id']);
 
     $errors = [];
 
-    if (!validate($title,'reqiured')) {
+    ////////Validate name
+    if (!validate($name, 'reqiured')) {
         # code...
-        $errors['title']='Field Required';
-    }elseif(!validate($title , 'min', 3)){
-        $errors['title']='Field Length Must Be > = 3 char';
+        $errors['Name'] = 'Field Required';
+    } elseif (!validate($name, 'min', 3)) {
+        $errors['Name'] = 'Field Length Must Be > = 3 char';
+    }
+
+    /////////Validate Email
+    if (!validate($email, 'reqiured')) {
+        # code...
+        $errors['Email'] = 'Field Required';
+    } elseif (!validate($email, 'email')) {
+        $errors['Email'] = 'Invalid Format';
+    }
+
+
+    ////////////Validate User Type
+    if (!validate($user_type_id, 'reqiured')) {
+        # code...
+        $errors['User Type'] = 'Field Required';
+    } elseif (!validate($user_type_id, 'int')) {
+        $errors['User Type'] = 'Field Must Be Int';
     }
 
     #Check Errors
-    if(count($errors) > 0){
-        $_SESSION['Message'] = $errors ;
-    }else{
+    if (count($errors) > 0) {
+        $_SESSION['Message'] = $errors;
+    } else {
 
-        $sql = "update user_type set type = '$title' where id = $id ";
-        $edit = doQuery($sql);
-        if ($edit) {
-            # code...
+
+        ///////////db
+        $sql   = "update user set name = '$name' , email = '$email' , user_type_id = $user_type_id where id = $id";
+        $create = doQuery($sql);
+        if ($create) {
             $message = ["Success" => "Raw Updated"];
             $_SESSION['Message'] = $message;
             header("Location: index.php");
-        }else{
-            $message = ["Fail" => "Fail To  Update Raw"];
+        } else {
+            $message = ["Fail" => " Update Row"];
         }
 
         $_SESSION['Message'] = $message;
@@ -75,16 +100,16 @@ require '../layouts/sidebar.php';
 
             <?php
             # Print Messages .... 
-            Messages('Dashboard / Roles / Edit');
+            Messages('Dashboard / User / Edit');
             ?>
 
 
         </ol>
 
 
-        <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'])."?id=". $data['id']; ?>" method="POST" >
+        <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']) . "?id=" . $data['id']; ?>" method="POST">
 
-        <div class="form-group">
+            <div class="form-group">
                 <label for="exampleInputName">Name</label>
                 <input type="text" class="form-control" required id="exampleInputName" aria-describedby="" name="name" value="<?php echo $data['name']; ?>" placeholder="Enter Name">
             </div>
@@ -100,7 +125,9 @@ require '../layouts/sidebar.php';
                     <?php
                     while ($raw = mysqli_fetch_assoc($type_op)) {
                     ?>
-                        <option value="<?php echo $raw['id'];?> <?php if( $data['user_type_id'] == $raw['id']){echo "selected";}  ?>"><?php echo $raw['type']; ?></option>
+                        <option value="<?php echo $raw['id']; ?>" <?php if ($raw['id'] == $data['user_type_id']) {
+                                                                        echo "selected";
+                                                                    }  ?>><?php echo $raw['type']; ?></option>
                     <?php } ?>
                 </select>
             </div>

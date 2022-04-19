@@ -2,8 +2,8 @@
 
 ############################################################
 ///////// Connect with db
-require '../../partials/db.php';
-require '../../partials/functions.php';
+require '../partials/db.php';
+require '../partials/functions.php';
 
 $sql  = "select * From subscribe";
 $show = doQuery($sql);

@@ -14,7 +14,7 @@ if (!validate($id,'int')) {
     # code...
     $message = ["Error" => "Invalid Id"];
 }else{
-    $sql    =  "delete from user where id = $id";
+    $sql    =  "delete from feedback where id = $id";
     $delete = doQuery($sql);
     if ($delete) {
         # code...

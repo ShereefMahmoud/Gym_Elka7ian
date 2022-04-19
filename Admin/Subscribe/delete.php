@@ -2,8 +2,8 @@
 
 ############################################################
 ///////// Connect with db
-require '../../partials/db.php';
-require '../../partials/functions.php';
+require '../partials/db.php';
+require '../partials/functions.php';
 
 $id = $_GET['id'];
 
@@ -25,12 +25,3 @@ if (!validate($id,'int')) {
 
 $_SESSION['Message'] = $message;
 header("Location: index.php");
-
-
-
-?>
-
-
-
-
-

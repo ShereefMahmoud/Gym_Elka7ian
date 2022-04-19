@@ -2,8 +2,8 @@
 
 ############################################################
 ///////// Connect with db
-require '../../partials/db.php';
-require '../../partials/functions.php';
+require '../partials/db.php';
+require '../partials/functions.php';
 
 #############################################################
 
@@ -12,7 +12,7 @@ $sql = "select * from user_type";
 $show = doQuery($sql);
 #############################################################
 
-if ($_SERVER['REQUEST_METHOD']=='POST') {
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     # Fetch Data
     $name = cleanData($_POST['name']);
     $email = cleanData($_POST['email']);
@@ -22,53 +22,52 @@ if ($_SERVER['REQUEST_METHOD']=='POST') {
     $errors = [];
 
     ////////Validate name
-    if (!validate($name,'reqiured')) {
+    if (!validate($name, 'reqiured')) {
         # code...
-        $errors['Name']='Field Required';
-    }elseif(!validate($name , 'min', 3)){
-        $errors['Name']='Field Length Must Be > = 3 char';
+        $errors['Name'] = 'Field Required';
+    } elseif (!validate($name, 'min', 3)) {
+        $errors['Name'] = 'Field Length Must Be > = 3 char';
     }
 
     /////////Validate Email
-    if (!validate($email,'reqiured')) {
+    if (!validate($email, 'reqiured')) {
         # code...
-        $errors['Email']='Field Required';
-    }elseif(!validate($email , 'email')){
-        $errors['Email']='Invalid Format';
+        $errors['Email'] = 'Field Required';
+    } elseif (!validate($email, 'email')) {
+        $errors['Email'] = 'Invalid Format';
     }
 
     ////////////Validate Password
-    if (!validate($password,'reqiured')) {
+    if (!validate($password, 'reqiured')) {
         # code...
-        $errors['Password']='Field Required';
-    }elseif(!validate($password , 'min')){
-        $errors['Password']='Field Length Must Be > = 6 char';
+        $errors['Password'] = 'Field Required';
+    } elseif (!validate($password, 'min')) {
+        $errors['Password'] = 'Field Length Must Be > = 6 char';
     }
 
     ////////////Validate User Type
-    if (!validate($user_type_id,'reqiured')) {
+    if (!validate($user_type_id, 'reqiured')) {
         # code...
-        $errors['User Type']='Field Required';
-    }elseif(!validate($user_type_id , 'int')){
-        $errors['User Type']='Field Must Be Int';
+        $errors['User Type'] = 'Field Required';
+    } elseif (!validate($user_type_id, 'int')) {
+        $errors['User Type'] = 'Field Must Be Int';
     }
 
     #Check Errors
-    if(count($errors) > 0){
-        $_SESSION['Message'] = $errors ;
-    }else{
+    if (count($errors) > 0) {
+        $_SESSION['Message'] = $errors;
+    } else {
 
         $password = md5($password);
 
         ///////////db
-        $sql   ="insert into user (name,email,password,user_type_id) values ('$name','$email','$password',$user_type_id)";
+        $sql   = "insert into user (name,email,password,user_type_id) values ('$name','$email','$password',$user_type_id)";
         $create = doQuery($sql);
-        if($create){
+        if ($create) {
             $message = ["Success" => "Raw Inserted"];
             $_SESSION['Message'] = $message;
             header("Location: index.php");
-            
-        }else{
+        } else {
             $message = ["Fail" => " Insert Row"];
         }
 
@@ -100,7 +99,7 @@ require '../layouts/sidebar.php';
         </ol>
 
 
-        <form action="<?php echo   htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="post" >
+        <form action="<?php echo   htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="post">
 
             <div class="form-group">
                 <label for="exampleInputName">Name</label>

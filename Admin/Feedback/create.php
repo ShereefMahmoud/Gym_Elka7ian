@@ -5,33 +5,51 @@
 require '../partials/db.php';
 require '../partials/functions.php';
 
+#############################################################
+
+///////////// Form
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     # Fetch Data
     $title = cleanData($_POST['title']);
+    $content = cleanData($_POST['content']);
 
     $errors = [];
 
+    ////////Validate name
     if (!validate($title, 'reqiured')) {
         # code...
-        $errors['title'] = 'Field Required';
-    } elseif (!validate($title, 'min', 3)) {
-        $errors['title'] = 'Field Length Must Be > = 3 char';
+        $errors['Name'] = 'Field Required';
+    } elseif (!validate($title, 'min')) {
+        $errors['Title'] = 'Field Length Must Be > = 6 char';
+    }
+
+    /////////Validate Email
+    if (!validate($content, 'reqiured')) {
+        # code...
+        $errors['Content'] = 'Field Required';
+    } elseif (!validate($content, 'min', 50)) {
+        $errors['Content'] = 'Invalid Format';
     }
 
     #Check Errors
     if (count($errors) > 0) {
         $_SESSION['Message'] = $errors;
     } else {
-        $sql   = "insert into subscribe (type) values ('$title')";
+
+
+        ///////////db
+        $sql   = "insert into feedback ( title , content , user_id) values ('$title','$content', 1 )";
         $create = doQuery($sql);
         if ($create) {
             $message = ["Success" => "Raw Inserted"];
+            $_SESSION['Message'] = $message;
+            header("Location: index.php");
         } else {
             $message = ["Fail" => " Insert Row"];
         }
 
         $_SESSION['Message'] = $message;
-        header('Location: index.php');
     }
 }
 
@@ -52,7 +70,7 @@ require '../layouts/sidebar.php';
 
             <?php
             # Print Messages .... 
-            Messages('Dashboard / Subscribe / Create');
+            Messages('Dashboard / Feedback / Create');
             ?>
 
 
@@ -63,9 +81,13 @@ require '../layouts/sidebar.php';
 
             <div class="form-group">
                 <label for="exampleInputName">Title</label>
-                <input type="text" class="form-control" required id="exampleInputName" aria-describedby="" name="title" placeholder="Enter Title">
+                <input type="text" class="form-control" required id="exampleInputName" aria-describedby="" name="title" placeholder="Enter Name">
             </div>
 
+            <div class="form-group">
+                <label for="exampleInputName">Content</label>
+                <textarea class="form-control" name="content" id="exampleFormControlTextarea1" rows="3"></textarea>
+            </div>
 
 
             <button type="submit" class="btn btn-primary">Submit</button>

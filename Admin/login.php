@@ -1,6 +1,6 @@
 <?php
 ////////// Connection DB ////////////
-require "partials/connectionDB.php" ;
+require "partials/db.php" ;
 
 ////////// To use Any Function //////////
 require "partials/functions.php" ;
@@ -12,18 +12,20 @@ if ($_SERVER['REQUEST_METHOD']=="POST") {
 
     $errors = [];
 
-    #validate name
-    if (empty($email)) {
-        $errors['email'] = ' Field Required';
-    }elseif(!filter_var($email,FILTER_VALIDATE_EMAIL)){
-        $errors['email'] = 'Not Valid';
+    /////////Validate Email
+    if (!validate($email, 'reqiured')) {
+        # code...
+        $errors['Email'] = 'Field Required';
+    } elseif (!validate($email, 'email')) {
+        $errors['Email'] = 'Invalid Format';
     }
 
-    #validate name
-    if (empty($password)) {
-        $errors['pasword'] = ' Field Required';
-    }elseif(strlen($password) < 8){
-        $errors['password'] = ' must be more than 8 ';
+    ////////////Validate Password
+    if (!validate($password, 'reqiured')) {
+        # code...
+        $errors['Password'] = 'Field Required';
+    } elseif (!validate($password, 'min')) {
+        $errors['Password'] = 'Field Length Must Be > = 6 char';
     }
 
     #check errors
@@ -33,31 +35,19 @@ if ($_SERVER['REQUEST_METHOD']=="POST") {
         }
     }else{
         #encript password
-        //$password = md5($password);
+        $password = md5($password);
 
         ###### selsct data from DB
-        $sql = "select * from user where email = '$email' and password = '$password' ";
+        $sql = "select user.* , user_type.type as role from user inner join user_type on user.user_type_id = user_type.id where user.email = '$email' && user.password = '$password' ";
         $checkLogin = mysqli_query($connection,$sql);
 
         ######Check Data 
         if (mysqli_num_rows($checkLogin) == 1 ) {
             $userData = mysqli_fetch_assoc($checkLogin);
             $_SESSION['user'] = $userData;
-
-
-            ####check privilage ######
-            if ($_SESSION['user']['user_type_id'] == 1 ) {
-                # redirect to manager
-                header('location: manager/index.php');
-            }elseif($_SESSION['user']['user_type_id'] == 2 ){
-
-                # redirect to coach
-                header('location: coach/index.php');
-            }else{
-
-                # redirect to member
-                header('location: member/index.php');
-            }
+            # redirect to member
+            header('location: '.url(''));
+        
         }else{
             echo "<script> window.alert('Please Try again , Your Email or Password Not Valid .')</script>";
         }
@@ -76,13 +66,13 @@ if ($_SERVER['REQUEST_METHOD']=="POST") {
 <head>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
-<link rel="stylesheet" href="main.css">
+<link rel="stylesheet" href="../main.css">
 </head>
 <body>
 	<section class="login">
 		<div class="login_box">
 			<div class="left">
-				<div class="top_link"><a href="index.php">
+				<div class="top_link"><a href="../index.php">
                 <img src="https://drive.google.com/u/0/uc?id=16U__U5dJdaTfNGobB_OpwAJ73vM50rPV&export=download" alt="">Return home</a></div>
 				<div class="contact">
 					<form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']) ; ?>" method="POST">

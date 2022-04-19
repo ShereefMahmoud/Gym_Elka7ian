@@ -2,9 +2,8 @@
 
 ############################################################
 ///////// Connect with db
-require '../../partials/db.php';
-require '../../partials/functions.php';
-
+require '../partials/db.php';
+require '../partials/functions.php';
 
 $id = $_GET['id'];
 
@@ -14,7 +13,7 @@ if (!validate($id,'int')) {
     # code...
     $message = ["Error" => "Invalid Id"];
 }else{
-    $sql    =  "delete from user_type where id = $id";
+    $sql    =  "delete from coach where id = $id";
     $delete = doQuery($sql);
     if ($delete) {
         # code...
@@ -26,12 +25,3 @@ if (!validate($id,'int')) {
 
 $_SESSION['Message'] = $message;
 header("Location: index.php");
-
-
-
-?>
-
-
-
-
-

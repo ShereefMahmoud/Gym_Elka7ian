@@ -36,6 +36,13 @@ function validate($input, $flag, $len = 6)
             }
             break;
 
+        case 'float':
+                # code...
+                if (!filter_var($input, FILTER_VALIDATE_FLOAT)) {
+                    $status = false;
+                }
+                break;
+
         case 'min':
             # code...
             if (strlen($input) < $len) {
@@ -60,6 +67,18 @@ function Messages($text)
         unset($_SESSION['Message']);
     }else{
         echo '  <li class="breadcrumb-item active">'.$text.'</li>';  
+    }
+}
+
+///////////// URL
+function url($input){
+    return "http://".$_SERVER['HTTP_HOST']."/Gym_Elka7ian/Admin/".$input ;
+}
+
+/////////////Check Session
+function checkSession(){
+    if(!isset($_SESSION['user'])){
+        header('Location:'.url('login.php'));
     }
 }
 

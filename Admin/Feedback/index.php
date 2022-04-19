@@ -6,7 +6,7 @@ require '../partials/db.php';
 require '../partials/functions.php';
 
 
-$sql  = "select user.* , user_type.type as user_type From user inner join user_type on user.user_type_id = user_type.id";
+$sql  = "select feedback.* , user.name as user_name From feedback inner join user on feedback.user_id = user.id";
 $show = doQuery($sql);
 
 
@@ -24,7 +24,7 @@ require '../layouts/sidebar.php';
         <ol class="breadcrumb mb-4">
             <?php
 
-            Messages('Dashboard / Roles / Index');
+            Messages('Dashboard / Feedback / Index');
 
             ?>
         </ol>
@@ -32,9 +32,7 @@ require '../layouts/sidebar.php';
         <div class="card mb-4">
             <div class="card-header">
                 <i class="fas fa-table mr-1"></i>
-                Roles Data
-
-                <div style="margin-left: 78%; display:inline"><a href="create.php">+ Add New Role</a> </div>
+                Feedback Data
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -43,8 +41,8 @@ require '../layouts/sidebar.php';
                             <tr>
                                 <th>ID</th>
                                 <th>Name</th>
-                                <th>Email</th>
-                                <th>Role</th>
+                                <th>Title</th>
+                                <th>Content</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -52,8 +50,8 @@ require '../layouts/sidebar.php';
                             <tr>
                                 <th>ID</th>
                                 <th>Name</th>
-                                <th>Email</th>
-                                <th>Role</th>
+                                <th>Title</th>
+                                <th>Content</th>
                                 <th>Actions</th>
                             </tr>
                         </tfoot>
@@ -64,9 +62,9 @@ require '../layouts/sidebar.php';
                             ?>
                                 <tr>
                                     <td><?php echo  ++$i; ?></td>
-                                    <td><?php echo $row['name']; ?></td>
-                                    <td><?php echo $row['email']; ?></td>
-                                    <td><?php echo $row['user_type']; ?></td>
+                                    <td><?php echo $row['user_name']; ?></td>
+                                    <td><?php echo $row['title']; ?></td>
+                                    <td><?php echo $row['content']; ?></td>
                                     <td>
                                         <a href='delete.php?id=<?php echo $row['id']; ?>' class='btn btn-danger m-r-1em'>Delete</a>
                                         <a href='edit.php?id=<?php echo $row['id']; ?>' class='btn btn-primary m-r-1em'>Edit</a>
