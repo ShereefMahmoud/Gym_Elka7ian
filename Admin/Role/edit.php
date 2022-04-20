@@ -7,33 +7,32 @@ require '../partials/functions.php';
 
 ///////// Check Privilage If Admin
 require '../partials/checkManager.php';
-########################################################################
 
 $id = $_GET['id'];
 
-$sql  = "select * From subscribe where id = $id";
-$show = doQuery($sql);
+$sql  = "select * From user_type where id = $id";
+$show_type = doQuery($sql);
 
 
-if (mysqli_num_rows($show) == 0) {
+if (mysqli_num_rows($show_type) == 0) {
     $message = ["Fail" => "Invalid Data"];
     $_SESSION['Message'] = $message;
     header("Location: index.php");
 } else {
-    $data = mysqli_fetch_assoc($show);
+    $data_type = mysqli_fetch_assoc($show_type);
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     # Fetch Data
-    $title = cleanData($_POST['title']);
+    $type = cleanData($_POST['type']);
 
     $errors = [];
 
-    if (!validate($title, 'reqiured')) {
+    if (!validate($type, 'reqiured')) {
         # code...
-        $errors['title'] = 'Field Required';
-    } elseif (!validate($title, 'min', 3)) {
-        $errors['title'] = 'Field Length Must Be > = 3 char';
+        $errors['Type'] = 'Field Required';
+    } elseif (!validate($type, 'min', 3)) {
+        $errors['Type'] = 'Field Length Must Be > = 3 char';
     }
 
     #Check Errors
@@ -41,9 +40,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $_SESSION['Message'] = $errors;
     } else {
 
-        $sql = "update subscribe set type = '$title' where id = $id ";
-        $edit = doQuery($sql);
-        if ($edit) {
+        $sql = "update user_type set type = '$type' where id = $id ";
+        $edit_type = doQuery($sql);
+        if ($edit_type) {
             $message = ["Success" => "Raw Updated"];
             $_SESSION['Message'] = $message;
             header('Location: index.php');
@@ -73,18 +72,18 @@ require '../layouts/sidebar.php';
 
             <?php
             # Print Messages .... 
-            Messages('Dashboard / Subscribe / Edit');
+            Messages('Dashboard / Type / Edit');
             ?>
 
 
         </ol>
 
 
-        <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']) . "?id=" . $data['id']; ?>" method="POST">
+        <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']) . "?id=" . $data_type['id']; ?>" method="POST">
 
             <div class="form-group">
-                <label for="exampleInputName">Title</label>
-                <input type="text" class="form-control" required id="exampleInputName" aria-describedby="" name="title" placeholder="Enter Title" value="<?php echo $data['type']; ?>">
+                <label for="exampleInputName">Type</label>
+                <input type="text" class="form-control" required id="exampleInputName" aria-describedby="" name="type" placeholder="Enter Title" value="<?php echo $data_type['type']; ?>">
             </div>
 
 

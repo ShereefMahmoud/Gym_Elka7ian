@@ -5,6 +5,10 @@
 require '../partials/db.php';
 require '../partials/functions.php';
 
+/////////////Check Privilage Admin Or Receptionist
+require '../partials/CheckManagerOrReception.php'; 
+
+
 ########################################################################################################
 # Fetch Roles ..... 
 $sql = "select * from user_type";
@@ -75,6 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $message = ["Success" => "Raw Updated"];
             $_SESSION['Message'] = $message;
             header("Location: index.php");
+            exit;
         } else {
             $message = ["Fail" => " Update Row"];
         }

@@ -6,6 +6,11 @@ require '../partials/db.php';
 require '../partials/functions.php';
 #####################################################################################################
 
+/////////////Check Privilage Admin Or Receptionist
+require '../partials/CheckManagerOrReception.php'; 
+
+#############################################################
+
 #Fetch User data
 $sql = "select user.* from user inner join user_type on user.user_type_id=user_type.id where type = 'coach'";
 $show_user = doQuery($sql);
@@ -81,6 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $message = ["Success" => "Raw Updated"];
             $_SESSION['Message'] = $message;
             header("Location: index.php");
+            exit;
         } else {
             $message = ["Fail" => " update Row"];
         }

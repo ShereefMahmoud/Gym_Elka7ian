@@ -6,13 +6,13 @@ require '../partials/db.php';
 require '../partials/functions.php';
 
 /////////////Check Privilage Admin Or Receptionist
-require '../partials/CheckManagerOrReception.php'; 
+require '../partials/checkManagerOrReceptionOrCoach.php'; 
 
-#############################################################
+############################################################
 
 
-$sql  = "select coach.* , user.name as user_name From coach inner join user on coach.user_id = user.id";
-$show_coach_details = doQuery($sql);
+$sql  = "select member.* , user.name as user_name , subscribe.type as sub_type From member inner join user on member.user_id = user.id  inner join subscribe on member.subscribe_id = subscribe.id";
+$show_member_details = doQuery($sql);
 
 
 
@@ -29,7 +29,7 @@ require '../layouts/sidebar.php';
         <ol class="breadcrumb mb-4">
             <?php
 
-            Messages('Dashboard / Coach Details / Index');
+            Messages('Dashboard / Member Details / Index');
 
             ?>
         </ol>
@@ -37,9 +37,7 @@ require '../layouts/sidebar.php';
         <div class="card mb-4">
             <div class="card-header">
                 <i class="fas fa-table mr-1"></i>
-                Coach Data
-
-                <div style="margin-left: 74%; display:inline"><a href="create.php">+ Add New Coach</a> </div>
+                Member Data
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -50,7 +48,10 @@ require '../layouts/sidebar.php';
                                 <th>Name</th>
                                 <th>Address</th>
                                 <th>Gender</th>
-                                <th>Salary</th>
+                                <th>Type Of Subscribe </th>
+                                <th>Start Subscribe </th>
+                                <th>End Subscribe </th>
+                                <th>Active </th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -60,21 +61,27 @@ require '../layouts/sidebar.php';
                                 <th>Name</th>
                                 <th>Address</th>
                                 <th>Gender</th>
-                                <th>Salary</th>
+                                <th>Type Of Subscribe </th>
+                                <th>Start Subscribe </th>
+                                <th>End Subscribe </th>
+                                <th>Active </th>
                                 <th>Actions</th>
                             </tr>
                         </tfoot>
                         <tbody>
                             <?php
                             $i = 0;
-                            while ($raw = mysqli_fetch_assoc($show_coach_details)) {
+                            while ($raw = mysqli_fetch_assoc($show_member_details)) {
                             ?>
                                 <tr>
                                     <td><?php echo  ++$i; ?></td>
                                     <td><?php echo $raw['user_name']; ?></td>
                                     <td><?php echo $raw['address']; ?></td>
                                     <td><?php echo $raw['gender']; ?></td>
-                                    <td><?php echo $raw['salary']; ?></td>
+                                    <td><?php echo $raw['sub_type']; ?></td>
+                                    <td><?php echo $raw['start_subscribe']; ?></td>
+                                    <td><?php echo $raw['end_subscribe']; ?></td>
+                                    <td><?php echo $raw['active']; ?></td>
                                     <td>
                                         <a href='delete.php?id=<?php echo $raw['id']; ?>' class='btn btn-danger m-r-1em'>Delete</a>
                                         <a href='edit.php?id=<?php echo $raw['id']; ?>' class='btn btn-primary m-r-1em'>Edit</a>

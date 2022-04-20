@@ -12,8 +12,13 @@
                             <div class="sb-sidenav-menu-heading">Interface</div>
                             
                             <?php
-
-                            $modules = ["Role" ,"User" , "Coach_details" , "Feedback" ,"Subscribe"];
+                            if($_SESSION['user']['role'] == 'manager'){
+                            $modules = ["Role" ,"User" , "Coach_details" , "Member_details" , "Feedback" ,"Subscribe"];
+                            }elseif($_SESSION['user']['role'] == 'coach'){
+                            $modules = ["Member_details"];
+                            }elseif($_SESSION['user']['role'] == 'reception'){
+                            $modules = [ "User" , "Coach_details","Member_details" ];
+                            }
 
                             foreach($modules as $key => $value){
                             

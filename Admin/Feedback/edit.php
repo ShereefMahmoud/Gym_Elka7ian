@@ -5,6 +5,9 @@
 require '../partials/db.php';
 require '../partials/functions.php';
 
+///////// Check Privilage If Admin
+require '../partials/checkManager.php';
+
 ########################################################################################################
 # Fetch Feedback ..... 
 
@@ -59,6 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $message = ["Success" => "Raw Updated"];
             $_SESSION['Message'] = $message;
             header("Location: index.php");
+            exit;
         } else {
             $message = ["Fail" => " Update Row"];
         }

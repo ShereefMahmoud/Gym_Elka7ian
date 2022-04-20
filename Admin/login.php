@@ -78,8 +78,9 @@ if ($_SERVER['REQUEST_METHOD']=="POST") {
 					<form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']) ; ?>" method="POST">
 						<h3>SIGN IN</h3>
 						<input type="text" placeholder="Email" name="email">
-						<input type="password" placeholder="PASSWORD" name="password">
-						<button class="submit">LET'S GO</button>
+						<input type="password" placeholder="Password" name="password">
+						<button class="submit" style="margin-top: 70px;">LET'S GO</button>
+                        <p>Don't have Membership?<a href="<?php echo url("register.php") ?>">Sign Up</a></p>
 					</form>
 				</div>
 			</div>

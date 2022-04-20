@@ -5,6 +5,11 @@
 require '../partials/db.php';
 require '../partials/functions.php';
 
+/////////////Check Privilage Admin Or Receptionist
+require '../partials/CheckManagerOrReception.php'; 
+
+#############################################################
+
 
 $sql  = "select user.* , user_type.type as user_type From user inner join user_type on user.user_type_id = user_type.id";
 $show = doQuery($sql);
@@ -24,7 +29,7 @@ require '../layouts/sidebar.php';
         <ol class="breadcrumb mb-4">
             <?php
 
-            Messages('Dashboard / Roles / Index');
+            Messages('Dashboard / User / Index');
 
             ?>
         </ol>
@@ -32,9 +37,7 @@ require '../layouts/sidebar.php';
         <div class="card mb-4">
             <div class="card-header">
                 <i class="fas fa-table mr-1"></i>
-                Roles Data
-
-                <div style="margin-left: 78%; display:inline"><a href="create.php">+ Add New Role</a> </div>
+                User Data
             </div>
             <div class="card-body">
                 <div class="table-responsive">

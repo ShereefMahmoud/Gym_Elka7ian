@@ -5,6 +5,11 @@
 require '../partials/db.php';
 require '../partials/functions.php';
 
+/////////////Check Privilage Admin Or Receptionist
+require '../partials/CheckManagerOrReception.php'; 
+
+#############################################################
+
 $id = $_GET['id'];
 
 #############################################################

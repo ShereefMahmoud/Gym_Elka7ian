@@ -7,6 +7,10 @@ require '../partials/functions.php';
 
 #############################################################
 
+///////// Check Privilage If Admin
+require '../partials/checkManager.php';
+########################################################################
+
 ///////////// Form
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -40,11 +44,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         ///////////db
         $sql   = "insert into feedback ( title , content , user_id) values ('$title','$content', 1 )";
-        $create = doQuery($sql);
-        if ($create) {
+        $create_feedback = doQuery($sql);
+        if ($create_feedback) {
             $message = ["Success" => "Raw Inserted"];
             $_SESSION['Message'] = $message;
             header("Location: index.php");
+            exit;
         } else {
             $message = ["Fail" => " Insert Row"];
         }

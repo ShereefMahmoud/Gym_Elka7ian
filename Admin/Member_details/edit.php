@@ -6,14 +6,35 @@ require '../partials/db.php';
 require '../partials/functions.php';
 
 /////////////Check Privilage Admin Or Receptionist
-require '../partials/CheckManagerOrReception.php'; 
+require '../partials/checkManagerOrReceptionOrCoach.php'; 
 
-#############################################################
-
+#####################################################################################################
 ///// Fetch User Data
-$sql = "select user.* from user inner join user_type on user.user_type_id=user_type.id where type = 'coach'";
+$sql = "select user.* from user inner join user_type on user.user_type_id=user_type.id where type = 'member'";
 $show_user = doQuery($sql);
 #############################################################
+///////////////// Get Data From Subscribe Table 
+$sql = "select * from subscribe" ;
+$sub_op = doQuery($sql);
+
+
+########################################################################################################
+# Fetch Feedback ..... 
+
+$id = $_GET['id'];
+
+$sql  = "select *  From member  where id = $id";
+$show = doQuery($sql);
+if (mysqli_num_rows($show) == 0) {
+    $message = ["Fail" => "Invalid Data"];
+    $_SESSION['Message'] = $message;
+    header("Location: index.php");
+} else {
+    $show_coach = mysqli_fetch_assoc($show);
+}
+
+###########################################################################################
+//////////////Form
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     # Fetch Data
@@ -62,15 +83,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } else {
 
         ///////////db
-        $sql   = "insert into coach (address,gender,salary,user_id) values ('$address','$gender',$salary,$user_id)";
-        $create_coach_datails = doQuery($sql);
-        if ($create_coach_datails) {
-            $message = ["Success" => "Raw Inserted"];
+        $sql   = "update coach set address = '$address' , gender = '$gender' , salary = $salary , user_id = $user_id where id = $id";
+        $update_coach_datails = doQuery($sql);
+        if ($update_coach_datails) {
+            $message = ["Success" => "Raw Updated"];
             $_SESSION['Message'] = $message;
             header("Location: index.php");
             exit;
         } else {
-            $message = ["Fail" => " Insert Row"];
+            $message = ["Fail" => " update Row"];
         }
 
         $_SESSION['Message'] = $message;
@@ -94,14 +115,14 @@ require '../layouts/sidebar.php';
 
             <?php
             # Print Messages .... 
-            Messages('Dashboard / Coach_Datails / Create');
+            Messages('Dashboard / Coach / Edit');
             ?>
 
 
         </ol>
 
 
-        <form action="<?php echo   htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="post">
+        <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']) . "?id=" . $show_coach['id']; ?>" method="POST">
 
             <div class="form-group">
                 <label for="exampleInputPassword">Name </label>
@@ -116,21 +137,26 @@ require '../layouts/sidebar.php';
 
             <div class="form-group">
                 <label for="exampleInputName">address</label>
-                <input type="address" class="form-control" required id="exampleInputName" aria-describedby="" name="address" placeholder="Enter Address">
+                <input type="address" class="form-control" required id="exampleInputName" aria-describedby="" value="<?php echo $show_coach['address']; ?>" name="address" placeholder="Enter Address">
             </div>
 
             <div class="form-group" class="form-control">
                 <label for="exampleInputName">Gender</label>
                 <select class="form-control" name="gender">
-                    <option value="male">Male</option>
-                    <option value="female">Female</option>
+                    <option value="male" <?php if ($show_coach['gender'] == 'male') {
+                                                echo "selected";
+                                            } ?>>Male</option>
+                    <option value="female" <?php if ($show_coach['gender'] == 'female') {
+                                                echo "selected";
+                                            } ?>>Female</option>
                 </select>
             </div>
 
             <div class="form-group">
                 <label for="exampleInputName">Salary</label>
-                <input type="text" class="form-control" required id="exampleInputName" aria-describedby="" name="salary" placeholder="Enter Salary">
+                <input type="text" class="form-control" required id="exampleInputName" aria-describedby="" value="<?php echo $show_coach['salary']; ?>" name="salary" placeholder="Enter Salary">
             </div>
+
 
 
             <button type="submit" class="btn btn-primary">Submit</button>

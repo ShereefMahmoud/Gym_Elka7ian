@@ -6,21 +6,28 @@ require '../partials/db.php';
 require '../partials/functions.php';
 
 /////////////Check Privilage Admin Or Receptionist
-require '../partials/CheckManagerOrReception.php'; 
+require '../partials/checkManagerOrReceptionOrCoach.php'; 
 
 #############################################################
 
 ///// Fetch User Data
-$sql = "select user.* from user inner join user_type on user.user_type_id=user_type.id where type = 'coach'";
+$sql = "select user.* from user inner join user_type on user.user_type_id=user_type.id where type = 'member'";
 $show_user = doQuery($sql);
 #############################################################
 
+///////////////// Get Data From Subscribe Table 
+$sql = "select * from subscribe" ;
+$sub_op = doQuery($sql);
+
+##############################################################3
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     # Fetch Data
-    $user_id = cleanData($_POST['user_id']);
-    $address = cleanData($_POST['address']);
-    $gender = cleanData($_POST['gender']);
-    $salary = cleanData($_POST['salary']);
+    $user_id   = cleanData($_POST['user_id']);
+    $address   = cleanData($_POST['address']);
+    $gender    = cleanData($_POST['gender']);
+    $start_sub = strtotime(cleanData($_POST['start_sub']));
+    $sub_id    = cleanData($_POST['sub_id']);
 
     $errors = [];
 
@@ -47,12 +54,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $errors['gender'] = 'Field Required';
     }
 
-    ////////////Validate Salary 
-    if (!validate($salary, 'reqiured')) {
+    ////////Validate Date
+    if (!validate($start_sub, 'reqiured')) {
         # code...
-        $errors['Salary'] = 'Field Required';
-    } elseif (!validate($salary, 'int')) {
-        $errors['Salary'] = 'Field Must Be Int';
+        $errors['Start Subscribe'] = 'Field Required';
+     }
+    // elseif (!validate($start_sub, 'date')) {
+    //     $errors['Start Subscribe'] = 'Must Be Present Or Future';
+    // }
+
+    ////////////Validate Salary 
+    if (!validate($sub_id, 'reqiured')) {
+        # code...
+        $errors['Subscribe'] = 'Field Required';
+    } elseif (!validate($sub_id, 'int')) {
+        $errors['Subscribe'] = 'Field Must Be Int';
     }
 
 
@@ -60,11 +76,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (count($errors) > 0) {
         $_SESSION['Message'] = $errors;
     } else {
+        //$start_sub = date_format($start_sub,'Y-m-d');
+        // echo $start_sub;
+        // exit;
+
+        //$d = new DateTime( '2010-01-08' );
+        //modify( 'last day of next month' );
+        
+        //echo date_format($date,"Y-m-d");
+        if ($sub_id == 1) {
+            # code...
+            $end_sub = strtotime('+1 months');
+        }elseif($sub_id == 2){
+            $end_sub = strtotime('+6 months');
+        }else{
+            $end_sub = strtotime('+1 years');
+        }        
 
         ///////////db
-        $sql   = "insert into coach (address,gender,salary,user_id) values ('$address','$gender',$salary,$user_id)";
-        $create_coach_datails = doQuery($sql);
-        if ($create_coach_datails) {
+        $sql   = "insert into member ( address , gender , subscribe_id , user_id , active , start_subscribe , end_subscribe) values ('$address','$gender',$sub_id,$user_id , 1 , $start_sub , '$end_sub')";
+        $create_member_datails = doQuery($sql);
+        if ($create_member_datails) {
             $message = ["Success" => "Raw Inserted"];
             $_SESSION['Message'] = $message;
             header("Location: index.php");
@@ -94,7 +126,8 @@ require '../layouts/sidebar.php';
 
             <?php
             # Print Messages .... 
-            Messages('Dashboard / Coach_Datails / Create');
+            Messages('Dashboard / Member_Datails / Create');
+           
             ?>
 
 
@@ -128,8 +161,17 @@ require '../layouts/sidebar.php';
             </div>
 
             <div class="form-group">
-                <label for="exampleInputName">Salary</label>
-                <input type="text" class="form-control" required id="exampleInputName" aria-describedby="" name="salary" placeholder="Enter Salary">
+                <label for="exampleInputName">Start Subscribe</label>
+                <input type="date" class="form-control" required id="exampleInputName" aria-describedby="" name="start_sub">
+            </div>
+
+            <div class="form-group" class="form-control">
+                <label for="exampleInputName">Subscribe</label>
+                <select class="form-control" name="sub_id">
+                <?php while($raw = mysqli_fetch_assoc($sub_op)){ ?> 
+                            <option value="<?php echo $raw['id']; ?>"><?php echo $raw['type']; ?></option>
+                <?php } ?>
+                </select>
             </div>
 
 

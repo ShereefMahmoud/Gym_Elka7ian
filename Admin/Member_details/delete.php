@@ -5,9 +5,10 @@
 require '../partials/db.php';
 require '../partials/functions.php';
 
-///////// Check Privilage If Admin
-require '../partials/checkManager.php';
-########################################################################
+/////////////Check Privilage Admin Or Receptionist
+require '../partials/checkManagerOrReceptionOrCoach.php'; 
+
+#############################################################
 
 $id = $_GET['id'];
 
@@ -17,7 +18,7 @@ if (!validate($id,'int')) {
     # code...
     $message = ["Error" => "Invalid Id"];
 }else{
-    $sql    =  "delete from subscribe where id = $id";
+    $sql    =  "delete from member where id = $id";
     $delete = doQuery($sql);
     if ($delete) {
         # code...

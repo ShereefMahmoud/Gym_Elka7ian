@@ -5,9 +5,13 @@
 require '../partials/db.php';
 require '../partials/functions.php';
 
+///////// Check Privilage If Admin
+require '../partials/checkManager.php';
+########################################################################
+
 
 $sql  = "select feedback.* , user.name as user_name From feedback inner join user on feedback.user_id = user.id";
-$show = doQuery($sql);
+$show_feedback = doQuery($sql);
 
 
 
@@ -58,16 +62,16 @@ require '../layouts/sidebar.php';
                         <tbody>
                             <?php
                             $i = 0;
-                            while ($row = mysqli_fetch_assoc($show)) {
+                            while ($raw = mysqli_fetch_assoc($show_feedback)) {
                             ?>
                                 <tr>
                                     <td><?php echo  ++$i; ?></td>
-                                    <td><?php echo $row['user_name']; ?></td>
-                                    <td><?php echo $row['title']; ?></td>
-                                    <td><?php echo $row['content']; ?></td>
+                                    <td><?php echo $raw['user_name']; ?></td>
+                                    <td><?php echo $raw['title']; ?></td>
+                                    <td><?php echo $raw['content']; ?></td>
                                     <td>
-                                        <a href='delete.php?id=<?php echo $row['id']; ?>' class='btn btn-danger m-r-1em'>Delete</a>
-                                        <a href='edit.php?id=<?php echo $row['id']; ?>' class='btn btn-primary m-r-1em'>Edit</a>
+                                        <a href='delete.php?id=<?php echo $raw['id']; ?>' class='btn btn-danger m-r-1em'>Delete</a>
+                                        <a href='edit.php?id=<?php echo $raw['id']; ?>' class='btn btn-primary m-r-1em'>Edit</a>
                                     </td>
                                 </tr>
 

@@ -49,6 +49,13 @@ function validate($input, $flag, $len = 6)
                 $status = false;
             }
             break;
+
+            case 'date':
+                # code...
+                if ($input < time()) {
+                    $status = false;
+                }
+                break;
         }
             return $status;
     
@@ -81,5 +88,7 @@ function checkSession(){
         header('Location:'.url('login.php'));
     }
 }
+
+
 
 ?>

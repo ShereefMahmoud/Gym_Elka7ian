@@ -5,6 +5,10 @@
 require '../partials/db.php';
 require '../partials/functions.php';
 
+///////// Check Privilage If Admin
+require '../partials/checkManager.php';
+########################################################################
+
 
 $id = $_GET['id'];
 
