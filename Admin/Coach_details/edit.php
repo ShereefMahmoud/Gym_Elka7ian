@@ -79,6 +79,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $_SESSION['Message'] = $errors;
     } else {
 
+        $sql = "select * from coach where user_id = $user_id";
+        $check = doQuery($sql);
+        if(mysqli_num_rows($check) > 1){
+            $message = ["Coach Details" => " Alredy Exit"];
+        }else{
         ///////////db
         $sql   = "update coach set address = '$address' , gender = '$gender' , salary = $salary , user_id = $user_id where id = $id";
         $update_coach_datails = doQuery($sql);
@@ -89,6 +94,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             exit;
         } else {
             $message = ["Fail" => " update Row"];
+        }
         }
 
         $_SESSION['Message'] = $message;

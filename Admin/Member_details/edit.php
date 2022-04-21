@@ -6,12 +6,12 @@ require '../partials/db.php';
 require '../partials/functions.php';
 
 /////////////Check Privilage Admin Or Receptionist
-require '../partials/checkManagerOrReception.php'; 
+require '../partials/checkManagerOrReception.php';
 
 #####################################################################################################
 
 ///////////////// Get Data From Coach Table 
-$sql = "select * from user where user_type_id = 2" ;
+$sql = "select * from user where user_type_id = 2";
 $coach_op = doQuery($sql);
 
 ####################################################################
@@ -21,7 +21,7 @@ $sql = "select user.* from user inner join user_type on user.user_type_id=user_t
 $show_user = doQuery($sql);
 #############################################################
 ///////////////// Get Data From Subscribe Table 
-$sql = "select * from subscribe" ;
+$sql = "select * from subscribe";
 $sub_op = doQuery($sql);
 
 
@@ -52,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $coach_id  = cleanData($_POST['coach_id']);
     $start_sub = cleanData($_POST['start_sub']);
 
-    $date=date_create($start_sub);
+    $date = date_create($start_sub);
     // date_modify($date,"+15 days");
     // $end_sub = date_format($date,"Y-m-d");
     // date_modify($date,"+15 days");
@@ -118,33 +118,40 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $_SESSION['Message'] = $errors;
     } else {
 
-        if ($sub_id == 1) {
-            # code...
-            date_modify($date,"+1 monthss");
-            $end_sub = date_format($date,"Y-m-d");
-            $end_sub = strtotime($end_sub);
-        }elseif($sub_id == 2){
-            date_modify($date,"+6 monthss");
-            $end_sub = date_format($date,"Y-m-d");
-            $end_sub = strtotime($end_sub);
-        }else{
-            date_modify($date,"+1 years");
-            $end_sub = date_format($date,"Y-m-d");
-            $end_sub = strtotime($end_sub);
-        }        
-
-        $start_sub = strtotime($start_sub);
-
-        ///////////db
-        $sql   = "update member set address ='$address' , gender = '$gender' , subscribe_id = $sub_id , user_id = $user_id , start_subscribe = $start_sub , end_subscribe = $end_sub , coach_id = $coach_id where id = $id";
-        $Update_member_datails = doQuery($sql);
-        if ($Update_member_datails) {
-            $message = ["Success" => "Raw Inserted"];
-            $_SESSION['Message'] = $message;
-            header("Location: index.php");
-            exit;
+        $sql = "select * from member where user_id = $user_id";
+        $check = doQuery($sql);
+        if (mysqli_num_rows($check) > 1) {
+            $message = ["Coach Details" => " Alredy Exit"];
         } else {
-            $message = ["Fail" => " Insert Row"];
+
+            if ($sub_id == 1) {
+                # code...
+                date_modify($date, "+1 monthss");
+                $end_sub = date_format($date, "Y-m-d");
+                $end_sub = strtotime($end_sub);
+            } elseif ($sub_id == 2) {
+                date_modify($date, "+6 monthss");
+                $end_sub = date_format($date, "Y-m-d");
+                $end_sub = strtotime($end_sub);
+            } else {
+                date_modify($date, "+1 years");
+                $end_sub = date_format($date, "Y-m-d");
+                $end_sub = strtotime($end_sub);
+            }
+
+            $start_sub = strtotime($start_sub);
+
+            ///////////db
+            $sql   = "update member set address ='$address' , gender = '$gender' , subscribe_id = $sub_id , user_id = $user_id , start_subscribe = $start_sub , end_subscribe = $end_sub , coach_id = $coach_id where id = $id";
+            $Update_member_datails = doQuery($sql);
+            if ($Update_member_datails) {
+                $message = ["Success" => "Raw Inserted"];
+                $_SESSION['Message'] = $message;
+                header("Location: index.php");
+                exit;
+            } else {
+                $message = ["Fail" => " Insert Row"];
+            }
         }
 
         $_SESSION['Message'] = $message;
@@ -183,7 +190,9 @@ require '../layouts/sidebar.php';
                     <?php
                     while ($raw = mysqli_fetch_assoc($show_user)) {
                     ?>
-                        <option value="<?php echo $raw['id']; ?>" <?php if($raw['id']==$show_member['user_id']){echo "selected";} ?>><?php echo $raw['name']; ?></option>
+                        <option value="<?php echo $raw['id']; ?>" <?php if ($raw['id'] == $show_member['user_id']) {
+                                                                        echo "selected";
+                                                                    } ?>><?php echo $raw['name']; ?></option>
                     <?php } ?>
                 </select>
             </div>
@@ -213,18 +222,22 @@ require '../layouts/sidebar.php';
             <div class="form-group" class="form-control">
                 <label for="exampleInputName">Coach</label>
                 <select class="form-control" name="coach_id">
-                <?php while($raw = mysqli_fetch_assoc($coach_op)){ ?> 
-                            <option value="<?php echo $raw['id']; ?>" <?php if($raw['id'] == $show_member['coach_id']){echo "selected";}?>><?php echo $raw['name']; ?></option>
-                <?php } ?>
+                    <?php while ($raw = mysqli_fetch_assoc($coach_op)) { ?>
+                        <option value="<?php echo $raw['id']; ?>" <?php if ($raw['id'] == $show_member['coach_id']) {
+                                                                        echo "selected";
+                                                                    } ?>><?php echo $raw['name']; ?></option>
+                    <?php } ?>
                 </select>
             </div>
 
             <div class="form-group" class="form-control">
                 <label for="exampleInputName">Subscribe</label>
                 <select class="form-control" name="sub_id">
-                <?php while($raw = mysqli_fetch_assoc($sub_op)){ ?> 
-                            <option value="<?php echo $raw['id'];  ?>" <?php if($raw['id']==$show_member['subscribe_id']){echo "selected";} ?>><?php echo $raw['type']; ?></option>
-                <?php } ?>
+                    <?php while ($raw = mysqli_fetch_assoc($sub_op)) { ?>
+                        <option value="<?php echo $raw['id'];  ?>" <?php if ($raw['id'] == $show_member['subscribe_id']) {
+                                                                        echo "selected";
+                                                                    } ?>><?php echo $raw['type']; ?></option>
+                    <?php } ?>
                 </select>
             </div>
 

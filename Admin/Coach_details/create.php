@@ -60,7 +60,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (count($errors) > 0) {
         $_SESSION['Message'] = $errors;
     } else {
-
+        $sql = "select * from coach where user_id = $user_id";
+        $check = doQuery($sql);
+        if(mysqli_num_rows($check) > 0){
+            $message = ["Coach Details" => " Alredy Exit"];
+        }else{
         ///////////db
         $sql   = "insert into coach (address,gender,salary,user_id) values ('$address','$gender',$salary,$user_id)";
         $create_coach_datails = doQuery($sql);
@@ -71,6 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             exit;
         } else {
             $message = ["Fail" => " Insert Row"];
+        }
         }
 
         $_SESSION['Message'] = $message;

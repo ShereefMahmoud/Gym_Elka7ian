@@ -81,6 +81,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (count($errors) > 0) {
         $_SESSION['Message'] = $errors;
     } else {
+
+        $sql = "select * from member where user_id = $user_id";
+        $check = doQuery($sql);
+        if(mysqli_num_rows($check) > 0){
+            $message = ["Member Details" => " Alredy Exit"];
+        }else{
+
         $start_sub = time();
 
         if ($sub_id == 1) {
@@ -103,6 +110,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         } else {
             $message = ["Fail" => " Insert Row"];
         }
+    }
 
         $_SESSION['Message'] = $message;
     }
