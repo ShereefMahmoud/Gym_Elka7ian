@@ -52,7 +52,7 @@ function validate($input, $flag, $len = 6)
 
             case 'date':
                 # code...
-                if ($input < time()) {
+                if (time() > strtotime($input)) {
                     $status = false;
                 }
                 break;

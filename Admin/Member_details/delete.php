@@ -6,7 +6,7 @@ require '../partials/db.php';
 require '../partials/functions.php';
 
 /////////////Check Privilage Admin Or Receptionist
-require '../partials/checkManagerOrReceptionOrCoach.php'; 
+require '../partials/checkManagerOrReception.php'; 
 
 #############################################################
 

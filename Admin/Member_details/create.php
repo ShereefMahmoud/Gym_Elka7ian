@@ -6,9 +6,15 @@ require '../partials/db.php';
 require '../partials/functions.php';
 
 /////////////Check Privilage Admin Or Receptionist
-require '../partials/checkManagerOrReceptionOrCoach.php'; 
+require '../partials/checkManagerOrReception.php'; 
 
 #############################################################
+
+///////////////// Get Data From Coach Table 
+$sql = "select * from user where user_type_id = 2" ;
+$coach_op = doQuery($sql);
+
+####################################################################
 
 ///// Fetch User Data
 $sql = "select user.* from user inner join user_type on user.user_type_id=user_type.id where type = 'member'";
@@ -26,8 +32,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $user_id   = cleanData($_POST['user_id']);
     $address   = cleanData($_POST['address']);
     $gender    = cleanData($_POST['gender']);
-    $start_sub = strtotime(cleanData($_POST['start_sub']));
     $sub_id    = cleanData($_POST['sub_id']);
+    $coach_id    = cleanData($_POST['coach_id']);
 
     $errors = [];
 
@@ -54,14 +60,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $errors['gender'] = 'Field Required';
     }
 
-    ////////Validate Date
-    if (!validate($start_sub, 'reqiured')) {
+    ////////////Validate Salary 
+    if (!validate($coach_id, 'reqiured')) {
         # code...
-        $errors['Start Subscribe'] = 'Field Required';
-     }
-    // elseif (!validate($start_sub, 'date')) {
-    //     $errors['Start Subscribe'] = 'Must Be Present Or Future';
-    // }
+        $errors['Coach'] = 'Field Required';
+    } elseif (!validate($coach_id, 'int')) {
+        $errors['Coach'] = 'Field Must Be Int';
+    }
 
     ////////////Validate Salary 
     if (!validate($sub_id, 'reqiured')) {
@@ -76,14 +81,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (count($errors) > 0) {
         $_SESSION['Message'] = $errors;
     } else {
-        //$start_sub = date_format($start_sub,'Y-m-d');
-        // echo $start_sub;
-        // exit;
+        $start_sub = time();
 
-        //$d = new DateTime( '2010-01-08' );
-        //modify( 'last day of next month' );
-        
-        //echo date_format($date,"Y-m-d");
         if ($sub_id == 1) {
             # code...
             $end_sub = strtotime('+1 months');
@@ -94,7 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }        
 
         ///////////db
-        $sql   = "insert into member ( address , gender , subscribe_id , user_id , active , start_subscribe , end_subscribe) values ('$address','$gender',$sub_id,$user_id , 1 , $start_sub , '$end_sub')";
+        $sql   = "insert into member ( address , gender , subscribe_id , user_id , start_subscribe , end_subscribe , coach_id) values ('$address','$gender',$sub_id,$user_id  , $start_sub , $end_sub , $coach_id)";
         $create_member_datails = doQuery($sql);
         if ($create_member_datails) {
             $message = ["Success" => "Raw Inserted"];
@@ -158,11 +157,15 @@ require '../layouts/sidebar.php';
                     <option value="male">Male</option>
                     <option value="female">Female</option>
                 </select>
-            </div>
 
-            <div class="form-group">
-                <label for="exampleInputName">Start Subscribe</label>
-                <input type="date" class="form-control" required id="exampleInputName" aria-describedby="" name="start_sub">
+                </div>
+            <div class="form-group" class="form-control">
+                <label for="exampleInputName">Coach</label>
+                <select class="form-control" name="coach_id">
+                <?php while($raw = mysqli_fetch_assoc($coach_op)){ ?> 
+                            <option value="<?php echo $raw['id']; ?>"><?php echo $raw['name']; ?></option>
+                <?php } ?>
+                </select>
             </div>
 
             <div class="form-group" class="form-control">

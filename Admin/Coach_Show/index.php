@@ -1,4 +1,4 @@
-<?php
+<?php 
 
 ############################################################
 ///////// Connect with db
@@ -6,30 +6,28 @@ require '../partials/db.php';
 require '../partials/functions.php';
 
 /////////////Check Privilage Admin Or Receptionist
-require '../partials/checkManagerOrReception.php'; 
+require '../partials/checkCoach.php'; 
 
-############################################################
+#############################################################
+$coach_id = $_SESSION['user']['id'];
 
-
-$sql  = "select member.* , user.name as user_name , subscribe.type as sub_type From member inner join user on member.user_id = user.id  inner join subscribe on member.subscribe_id = subscribe.id";
+$sql  = "select member.* , user.name as user_name  From member inner join user on member.user_id = user.id where member.coach_id = $coach_id ";
 $show_member_details = doQuery($sql);
-
-
 
 ############################################################
 //////// call header and navbar
 require '../layouts/header.php';
 require '../layouts/navbar.php';
-require '../layouts/sidebar.php';
 ?>
+<div id="layoutSidenav_content" >
 
 <main>
     <div class="container-fluid">
-        <h1 class="mt-4">Dashboard</h1>
+        <h1 class="mt-4" >  d</h1>
         <ol class="breadcrumb mb-4">
             <?php
 
-            Messages('Dashboard / Member Details / Index');
+            Messages('Data For Coach');
 
             ?>
         </ol>
@@ -38,6 +36,7 @@ require '../layouts/sidebar.php';
             <div class="card-header">
                 <i class="fas fa-table mr-1"></i>
                 Member Data
+                <a href="sendFeedback.php" style="margin-left: 80%;font-size:20px;">Send Feedback </a>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -48,10 +47,7 @@ require '../layouts/sidebar.php';
                                 <th>Name</th>
                                 <th>Address</th>
                                 <th>Gender</th>
-                                <th>Type Of Subscribe </th>
-                                <th>Start Subscribe </th>
                                 <th>End Subscribe </th>
-                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tfoot>
@@ -60,10 +56,7 @@ require '../layouts/sidebar.php';
                                 <th>Name</th>
                                 <th>Address</th>
                                 <th>Gender</th>
-                                <th>Type Of Subscribe </th>
-                                <th>Start Subscribe </th>
                                 <th>End Subscribe </th>
-                                <th>Actions</th>
                             </tr>
                         </tfoot>
                         <tbody>
@@ -76,13 +69,7 @@ require '../layouts/sidebar.php';
                                     <td><?php echo $raw['user_name']; ?></td>
                                     <td><?php echo $raw['address']; ?></td>
                                     <td><?php echo $raw['gender']; ?></td>
-                                    <td><?php echo $raw['sub_type']; ?></td>
-                                    <td><?php echo date('d M Y',$raw['start_subscribe']); ?></td>
                                     <td><?php echo date('d M Y',$raw['end_subscribe']); ?></td>
-                                    <td>
-                                        <a href='delete.php?id=<?php echo $raw['id']; ?>' class='btn btn-danger m-r-1em'>Delete</a>
-                                        <a href='edit.php?id=<?php echo $raw['id']; ?>' class='btn btn-primary m-r-1em'>Edit</a>
-                                    </td>
                                 </tr>
 
                             <?php } ?>
@@ -94,13 +81,7 @@ require '../layouts/sidebar.php';
     </div>
 </main>
 
-
-
-
-
-
-
-
+</div>
 
 <?php
 require '../layouts/footer.php';

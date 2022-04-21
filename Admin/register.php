@@ -13,6 +13,12 @@ $sub_op = doQuery($sql);
 
 ####################################################################
 
+///////////////// Get Data From Coach Table 
+$sql = "select * from user where user_type_id = 2" ;
+$coach_op = doQuery($sql);
+
+####################################################################
+
 if ($_SERVER['REQUEST_METHOD']=="POST") {
     # get data from inputs
     $name = cleanData($_POST['name']);
@@ -21,6 +27,7 @@ if ($_SERVER['REQUEST_METHOD']=="POST") {
     $gender = cleanData($_POST['gender']);
     $address = cleanData($_POST['address']);
     $sub_id = cleanData($_POST['sub_id']);
+    $coach_id = cleanData($_POST['coach_id']);
 
     $errors = [];
 
@@ -71,6 +78,14 @@ if ($_SERVER['REQUEST_METHOD']=="POST") {
         $errors['Subscribe Type'] = 'Must be int';
     }
 
+    ////////////Validate Password
+    if (!validate($coach_id, 'reqiured')) {
+        # code...
+        $errors['Coach'] = 'Field Required';
+    } elseif (!validate($coach_id, 'int')) {
+        $errors['Coach'] = 'Must be int';
+    }
+
 
 
     #check errors
@@ -79,7 +94,7 @@ if ($_SERVER['REQUEST_METHOD']=="POST") {
             echo "<script> window.alert('". $key ." : " . $value . "')</script>";
         }
     }else{
-        #encript password
+        #encript passwrd
         $password = md5($password);
 
         ###### inser data To DB
@@ -89,8 +104,19 @@ if ($_SERVER['REQUEST_METHOD']=="POST") {
         ######Check Create
         if ($create_user) {
             # code...
+            $start_sub = time();
+
+            if ($sub_id == 1) {
+                # code...
+                $end_sub = strtotime('+1 months');
+            }elseif($sub_id == 2){
+                $end_sub = strtotime('+6 months');
+            }else{
+                $end_sub = strtotime('+1 years');
+            }
+            
             $user_id = mysqli_insert_id($connection);
-            $sql = "insert into member ( address , gender , active , user_id , subscribe_id ) values ('$address', '$gender', 0 , $user_id , $sub_id )";
+            $sql = "insert into member ( address , gender , start_subscribe , end_subscribe ,coach_id, user_id , subscribe_id ) values ('$address', '$gender' , $start_sub , $end_sub ,$coach_id, $user_id , $sub_id )";
             $create_member = mysqli_query($connection,$sql);
             if ($create_member) {
                 echo "<script> window.alert(' Done Membership ')</script>";
@@ -122,8 +148,8 @@ if ($_SERVER['REQUEST_METHOD']=="POST") {
 	<section class="login">
 		<div class="login_box" style="height: 90vh;">
 			<div class="left">
-				<div class="top_link"><a href="../index.php">
-                <img src="https://drive.google.com/u/0/uc?id=16U__U5dJdaTfNGobB_OpwAJ73vM50rPV&export=download" alt="">Return home</a></div>
+				<div class="top_link"><a href="./login.php">
+                <img src="https://drive.google.com/u/0/uc?id=16U__U5dJdaTfNGobB_OpwAJ73vM50rPV&export=download" alt="">Return Login</a></div>
 				<div class="contact">
 					<form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']) ; ?>" method="POST">
 						<h3 style="margin-bottom: 10px;">MEMBERSHIP</h3>
@@ -140,6 +166,13 @@ if ($_SERVER['REQUEST_METHOD']=="POST") {
                             <option value="" selected> Subscribe Type </option>
                             <?php while($raw = mysqli_fetch_assoc($sub_op)){ ?> 
                             <option value="<?php echo $raw['id']; ?>"><?php echo $raw['type']; ?></option>
+                            <?php } ?>
+                        </select>
+
+                        <select name="coach_id">
+                            <option value="" selected> Coach </option>
+                            <?php while($raw = mysqli_fetch_assoc($coach_op)){ ?> 
+                            <option value="<?php echo $raw['id']; ?>"><?php echo $raw['name']; ?></option>
                             <?php } ?>
                         </select>
 
